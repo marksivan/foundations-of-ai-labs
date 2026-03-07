@@ -127,7 +127,6 @@ def compile_playbook():
 
         if board_tuple in memo:
             return memo[board_tuple]
-        
         winner = check_win_conditions(board)
 
         #Terminal states
@@ -135,7 +134,10 @@ def compile_playbook():
             return 1
         if winner ==2:
             return -1
-        if 0 not in board:
+        # if 0 not in board:
+        #     return 0
+
+        if winner == 0:
             return 0
         
         player = get_player_turn(board)
@@ -161,7 +163,7 @@ def compile_playbook():
                         best_value = min(best_value, value)
         
         best_moves = [move for move,val in move_values.items() if val == best_value]
-
+ 
         result[board_tuple] = best_moves
         memo[board_tuple] = best_value
 
@@ -178,11 +180,14 @@ def compile_playbook():
 
 
 
+
 ## Tests
 # print(check_win_conditions([1, 2, 2, 0, 1, 1, 2, 0, 0]))
 # print(check_win_conditions([1, 2, 2, 0, 1, 1, 2, 0, 1]))
 # print(check_win_conditions([2, 2, 2, 0, 1, 1, 1, 0, 0]))
 # print(check_win_conditions([2, 2, 2, 1, 1, 1, 0, 0, 0]))
+# print(check_win_conditions([2, 2, 1, 0, 1, 0, 1, 0, 0]))
+
 
 
 # print(random_player_fn([0, 0, 0, 0, 0, 0, 0, 0, 0]))
