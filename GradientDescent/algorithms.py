@@ -1,5 +1,5 @@
 import torch
-from levels import Environment
+from levels import Environment         
 
 
 def vanilla_grad_descent(rate, env):
@@ -30,7 +30,20 @@ def grad_descent(step_fn, env):
     
     """
     # Question ONE
-    pass
+    
+    pos = env.current_position()
+
+    while env.status() == Environment.ACTIVELY_SEARCHING:
+
+        step = step_fn(pos)
+
+        new_pos = pos + step
+        
+        env.step_to(new_pos)
+
+        pos = new_pos
+    
+    return env.steps
 
 
 def momentum_grad_descent(rate, env):
@@ -55,12 +68,28 @@ class MomentumStepFunction:
         
     """    
     def __init__(self, loss_gradient, learning_rate, momentum_rate):
-        # Question TWO
-        pass
+        self.gradient_fn = loss_gradient
+        self.learning_rate = learning_rate
+        self.momentum_rate = momentum_rate
+
+        self.velocity = torch.tensor([0.0, 0.0])
+        
+        
+    
         
     def __call__(self, pos):
-        # Question TWO
-        pass
+       
+        grad = self.gradient_fn(pos)
+
+        #  update velocity 
+        self.velocity = (
+            self.momentum_rate * self.velocity
+            - self.learning_rate * grad
+        )
+
+        # step is the velocity
+        return self.velocity
+
 
 
 def adagrad(rate, env):
@@ -85,12 +114,22 @@ class AdagradStepFunction:
         
     """
     def __init__(self, loss_gradient, learning_rate, delta = 0.0000001):
-        # Question THREE
-        pass
+        self.gradient_fn = loss_gradient
+        self.learning_rate = learning_rate
+        self.delta = delta
+        
+        # accumulated squared gradients
+        self.G = torch.tensor([0.0, 0.0])
         
     def __call__(self, pos):
-        # Question THREE
-        pass       
+        grad = self.gradient_fn(pos)
+
+        self.G = self.G + grad**2
+
+        # adjusted step
+        step = -self.learning_rate * grad / torch.sqrt(self.G + self.delta)
+
+        return step      
 
 
 def rmsprop(rate, decay_rate, env):
@@ -115,9 +154,22 @@ class RmsPropStepFunction:
         
     """
     def __init__(self, loss_gradient, learning_rate, decay_rate, delta=0.000001):
-        # Question FOUR
-        pass
+        self.gradient_fn = loss_gradient
+        self.learning_rate = learning_rate
+        self.decay_rate = decay_rate
+        self.delta = delta
+        
+        self.G = None
         
     def __call__(self, pos):
-        # Question FOUR
-        pass
+        grad = self.gradient_fn(pos)
+        
+        # initialize G on first step
+        if self.G is None:
+            self.G = grad ** 2
+        else:
+            self.G = self.decay_rate * self.G + (1 - self.decay_rate) * (grad ** 2)
+
+        step = -self.learning_rate * grad / (torch.sqrt(self.G) + self.delta)
+
+        return step
