@@ -14,14 +14,26 @@ def generate_data(outcome_fn, N):
     return data
 
 
-def compute_linear_outcome(x):
-    raise NotImplementedError("Function compute_linear_outcome is not yet implemented.")
+def compute_linear_outcome(x):    
+    theta = torch.tensor([0.5, 0.8, -0.4])
+
+    dot = x @ theta
+
+    if dot < -0.1:
+        return 0
+    elif dot > 0.1:
+        return 1
+    else:
+        return None
 
 
 def compute_nonlinear_outcome(x):
-    raise NotImplementedError(
-        "Function compute_nonlinear_outcome is not yet implemented."
-    )
+    if (x[1]**2 + x[2]**2) > 1.75:
+        return 0
+    elif (x[1]**2 + x[2]**2) < 1.25:
+        return 1
+    else:
+        return None
 
 
 def visualize(data):

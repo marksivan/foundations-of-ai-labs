@@ -28,7 +28,9 @@ class ExampleFunctionGraph2(torch.nn.Module):
 def compute_gradients_for_example1():
     g = ExampleFunctionGraph1()
     u = torch.tensor(3.0, requires_grad=True)
+    
     v = torch.tensor(4.0, requires_grad=True)
+
     y = g(u, v)
     y.backward()
     print(f"y = {y}")

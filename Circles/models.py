@@ -17,9 +17,21 @@ class LogisticRegressionModel(torch.nn.Module):
             self.theta = Parameter(torch.tensor([3.0, 4.0, 5.0]))
 
     def forward(self, x, y=None):
-        raise NotImplementedError(
-            "The forward method of LogisticRegressionModel has not been implemented."
-        )
+            
+        z = self.theta @ x.t()
+
+        probs = torch.sigmoid(z)
+
+        preds = (probs >= 0.5).int()
+
+        if y is not None:
+            loss = -(y * torch.log(probs) + (1 - y) * torch.log(1 - probs)).sum()
+        else:
+            loss = None
+
+        return preds, loss
+
+        
 
 
 def run_gradient_descent(model, data, test_data=None, batch_size=4, num_iters=1):
