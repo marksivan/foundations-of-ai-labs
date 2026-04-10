@@ -70,6 +70,38 @@ def check_all_columns(board,element):
     return col1 or col2 or col3 or col4 or col5 or col6 or col7
 
 
+def check_diagonal(board, element, diagonal):
+    for index in diagonal:
+        if diagonal[index] != element:
+            return False
+    return True
+
+def generate_diagonals():
+    positive_diagonals = []
+    negative_diagonals = []
+
+    positive_diagonal_starts = (3, 4, 5 ,6, 10, 11, 12, 13, 17, 18, 19, 20)
+    negative_diagonal_starts = (0, 1, 2, 3,7,8,9,10,14,15,16,15)
+
+    
+    postive_step = 6
+    for index in positive_diagonal_starts:
+        diagonal = []
+        for i in range(index, index + 4 * postive_step , postive_step):
+            diagonal.append(i)
+        positive_diagonals.append(diagonal)
+    
+
+    negative_step = 8
+
+    for index in negative_diagonal_starts:
+        diagonal = []
+        for i in range(index, index + 4 * negative_step , negative_step):
+            diagonal.append(i)
+        negative_diagonals.append(diagonal)
+    
+    return positive_diagonals + negative_diagonals
+    
 
 
 
@@ -78,6 +110,8 @@ def check_all_columns(board,element):
 
 
 
+def check_all_diagonals(board, element): 
+    pass
         
 def check_win_conditions(board):
     raise NotImplementedError("fill this in!")
