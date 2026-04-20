@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 def stringify_board(board):
     """Returns a nice string representation of a Connect Four board."""
 
@@ -70,9 +72,11 @@ def check_all_columns(board,element):
     return col1 or col2 or col3 or col4 or col5 or col6 or col7
 
 
+
+
 def check_diagonal(board, element, diagonal):
     for index in diagonal:
-        if diagonal[index] != element:
+        if board[index] != element:
             return False
     return True
 
@@ -81,7 +85,7 @@ def generate_diagonals():
     negative_diagonals = []
 
     positive_diagonal_starts = (3, 4, 5 ,6, 10, 11, 12, 13, 17, 18, 19, 20)
-    negative_diagonal_starts = (0, 1, 2, 3,7,8,9,10,14,15,16,15)
+    negative_diagonal_starts = (0, 1, 2, 3,7,8,9,10,14,15,16,17)
 
     
     postive_step = 6
@@ -93,7 +97,6 @@ def generate_diagonals():
     
 
     negative_step = 8
-
     for index in negative_diagonal_starts:
         diagonal = []
         for i in range(index, index + 4 * negative_step , negative_step):
@@ -103,19 +106,54 @@ def generate_diagonals():
     return positive_diagonals + negative_diagonals
     
 
-
-
-
-
-
-
-
 def check_all_diagonals(board, element): 
-    pass
+    diagonals = generate_diagonals()
+
+    for diagonal in diagonals:
+        if check_diagonal(board, element, diagonal):
+            return True
+    return False
         
 def check_win_conditions(board):
-    raise NotImplementedError("fill this in!")
+    players = (1,2)
+
+    winners = []
+
+    for player in players:
+        if check_all_columns(board, player) or check_all_rows(board, player) or check_all_diagonals(board, player):
+            winners.append(player)
+    
+    if len(winners) == 0:
+        return 0
+    
+    if len(winners) == 2:
+        raise Exception("There are two winners: Impossible board")
+    
+    return winners[0]
+
+def column_indices_map():
+    mapp = defaultdict(list)
+    for i in range(0,7):
+        for j in range(i + 35, i - 1, -7):
+            mapp[i].append(j)
+        mapp[i].append(-1)
+    return mapp
 
 
 def play_move(board, player, column):
-    raise NotImplementedError("fill this in!")
+    
+    column_positions_map = column_indices_map()
+
+    column_indices = column_positions_map[column]
+
+    for position in column_indices:
+        if position == -1:
+            break
+        if board[position] == 0:
+            board[position] = player
+            return board
+        
+    raise Exception(f"column {column} is full")
+    
+
+
